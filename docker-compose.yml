@@ -1,0 +1,99 @@
+services:
+  # Base de datos para Usuario Service
+  usuario-db:
+    image: postgres:15-alpine
+    container_name: usuario-db
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: usuario123
+      POSTGRES_DB: usuarios_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - usuario_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U usuario"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de datos para Pedido Service
+  pedido-db:
+    image: postgres:15-alpine
+    container_name: pedido-db
+    environment:
+      POSTGRES_USER: pedido
+      POSTGRES_PASSWORD: pedido123
+      POSTGRES_DB: pedidos_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pedido_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pedido"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservicio de Usuario
+  usuario-service:
+    build:
+      context: ./usuario-service
+      dockerfile: Dockerfile
+    container_name: usuario-service
+    ports:
+      - "18001:8001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://usuario-db:5432/usuarios_db
+      SPRING_DATASOURCE_USERNAME: usuario
+      SPRING_DATASOURCE_PASSWORD: usuario123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      usuario-db:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/usuario-service/api/v1/usuarios"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Microservicio de Pedido
+  pedido-service:
+    build:
+      context: ./pedido-service
+      dockerfile: Dockerfile
+    container_name: pedido-service
+    ports:
+      - "18002:8002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pedido-db:5432/pedidos_db
+      SPRING_DATASOURCE_USERNAME: pedido
+      SPRING_DATASOURCE_PASSWORD: pedido123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      USUARIO_SERVICE_URL: http://usuario-service:8001/usuario-service
+    depends_on:
+      pedido-db:
+        condition: service_healthy
+      usuario-service:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/pedido-service/api/v1/pedidos"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  usuario_db_data:
+  pedido_db_data:
+
+networks:
+  microservices-network:
+    driver: bridge

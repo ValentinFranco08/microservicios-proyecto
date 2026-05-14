@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: pedido-service
+  
+  datasource:
+    url: jdbc:postgresql://pedido-db:5432/pedidos_db
+    username: pedido
+    password: pedido123
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8002
+  servlet:
+    context-path: /pedido-service
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+# URL del servicio de Usuario (se puede sobrescribir con variables de entorno)
+usuario:
+  service:
+    url: http://usuario-service:8001/usuario-service
+
+logging:
+  level:
+    root: INFO
+    com.microservices: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
