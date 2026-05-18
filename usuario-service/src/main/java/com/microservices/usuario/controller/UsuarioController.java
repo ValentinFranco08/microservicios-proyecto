@@ -1,3 +1,4 @@
+// Controlador REST para gerenciar as operações relacionadas aos usuários
 package com.microservices.usuario.controller;
 
 import com.microservices.usuario.dto.UsuarioDTO;
