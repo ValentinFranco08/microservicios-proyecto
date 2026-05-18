@@ -90,4 +90,4 @@
     </build>
 </project>
 
-<!-- POM.xml para el servicio de Usuario, con dependencias para Spring Boot Web, Data JPA, PostgreSQL, Lombok y SpringDoc OpenAPI. --> 
+<!-- POM.xml para el servicio de Usuario, con dependencias para Spring Boot Web, Data JPA, PostgreSQL, Lombok y SpringDoc OpenAPI --> 

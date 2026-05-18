@@ -1,4 +1,4 @@
-## Dockerfile para el servicio de Usuario
+## Dockerfile para el servicio de Usuario - Define la imagen base de Maven para construir la aplicación, copia el código fuente, instala las dependencias y empaqueta la aplicación. Luego, utiliza una imagen de JRE para ejecutar la aplicación, exponiendo el puerto 8001 para el servicio de Usuario.
 FROM maven:3.9-eclipse-temurin-17 AS build
 
 WORKDIR /app

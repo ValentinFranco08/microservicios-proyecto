@@ -1,4 +1,4 @@
-## Docker Compose para microservicios de Usuario y Pedido con PostgreSQL
+## Docker Compose para microservicios de Usuario y Pedido con PostgreSQL - Define los servicios de base de datos y microservicios, con configuración de redes, volúmenes y healthchecks para asegurar la disponibilidad de cada componente.
 services:
   # Base de datos para Usuario Service
   usuario-db:
