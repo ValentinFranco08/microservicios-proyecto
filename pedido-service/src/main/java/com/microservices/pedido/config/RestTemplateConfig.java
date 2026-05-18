@@ -1,3 +1,4 @@
+// RestTemplateConfig.java
 package com.microservices.pedido.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;

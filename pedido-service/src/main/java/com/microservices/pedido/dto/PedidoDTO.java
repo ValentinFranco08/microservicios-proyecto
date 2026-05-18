@@ -1,3 +1,4 @@
+// PedidoDTO.java - DTO para transferir datos de pedidos entre capas, con campos relevantes para la presentación y lógica de negocio.
 package com.microservices.pedido.dto;
 
 import com.microservices.pedido.entity.Pedido.EstadoPedido;
