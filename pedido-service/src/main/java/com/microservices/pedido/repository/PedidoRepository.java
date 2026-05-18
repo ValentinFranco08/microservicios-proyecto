@@ -1,4 +1,4 @@
-// PedidoRepository.java
+// PedidoRepository.java - Repositorio para la entidad Pedido, con métodos personalizados para buscar por usuario y estado.
 package com.microservices.pedido.repository;
 
 import com.microservices.pedido.entity.Pedido;

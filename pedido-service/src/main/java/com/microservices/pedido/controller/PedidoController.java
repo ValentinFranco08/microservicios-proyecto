@@ -1,4 +1,4 @@
-// PedidoController.java
+// PedidoController.java - Controlador REST para gestionar los endpoints relacionados con los pedidos, incluyendo operaciones CRUD y consultas por usuario y estado.
 package com.microservices.pedido.controller;
 
 import com.microservices.pedido.dto.PedidoDTO;

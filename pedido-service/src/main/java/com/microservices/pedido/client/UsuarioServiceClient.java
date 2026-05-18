@@ -1,4 +1,4 @@
-// UsuarioServiceClient.java
+// UsuarioServiceClient.java - Cliente REST para interactuar con el servicio de Usuario
 package com.microservices.pedido.client;
 
 import com.microservices.pedido.dto.UsuarioDTO;
