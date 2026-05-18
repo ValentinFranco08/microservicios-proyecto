@@ -1,3 +1,4 @@
+// Repositório para acessar os dados dos usuários no banco de dados
 package com.microservices.usuario.repository;
 
 import com.microservices.usuario.entity.Usuario;

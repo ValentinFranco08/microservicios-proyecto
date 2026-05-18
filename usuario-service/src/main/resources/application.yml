@@ -1,3 +1,4 @@
+# Configurações do Spring Boot para o serviço de usuário
 spring:
   application:
     name: usuario-service
@@ -23,7 +24,7 @@ spring:
       max-request-size: 10MB
 
 server:
-  port: 8001
+  port: 8001 
   servlet:
     context-path: /usuario-service
 
@@ -42,3 +43,4 @@ logging:
     com.microservices: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+
