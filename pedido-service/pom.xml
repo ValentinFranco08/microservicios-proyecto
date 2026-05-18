@@ -89,3 +89,5 @@
         </plugins>
     </build>
 </project>
+
+<!-- POM.xml para el servicio de Pedido, con dependencias para Spring Boot Web, Data JPA, PostgreSQL, Lombok y SpringDoc OpenAPI. -->
