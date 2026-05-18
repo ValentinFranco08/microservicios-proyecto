@@ -1,3 +1,4 @@
+// Entidade JPA para representar a tabela de usuários no banco de dados
 package com.microservices.usuario.entity;
 
 import jakarta.persistence.*;

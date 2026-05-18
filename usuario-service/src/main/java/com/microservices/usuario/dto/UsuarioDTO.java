@@ -1,10 +1,11 @@
+// DTO (Data Transfer Object) para representar os dados do usuário
 package com.microservices.usuario.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+@Data 
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDTO {
@@ -19,3 +20,5 @@ public class UsuarioDTO {
     private String pais;
     private Boolean activo;
 }
+  
+  
