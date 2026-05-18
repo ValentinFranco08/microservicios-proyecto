@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: pedido-service
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8002
+
+usuario:
+  service:
+    url: http://localhost:8001/usuario-service
+
+logging:
+  level:
+    root: WARN
+    com.microservices: DEBUG
