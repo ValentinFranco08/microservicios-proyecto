@@ -1,3 +1,4 @@
+// Pedido.java
 package com.microservices.pedido.entity;
 
 import jakarta.persistence.*;
