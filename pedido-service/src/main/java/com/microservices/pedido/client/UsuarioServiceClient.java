@@ -1,3 +1,4 @@
+// UsuarioServiceClient.java
 package com.microservices.pedido.client;
 
 import com.microservices.pedido.dto.UsuarioDTO;

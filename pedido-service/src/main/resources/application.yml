@@ -1,3 +1,4 @@
+## application.yml para el servicio de Pedido, con configuración de base de datos PostgreSQL, servidor, SpringDoc OpenAPI y URL del servicio de Usuario.
 spring:
   application:
     name: pedido-service
@@ -47,3 +48,4 @@ logging:
     com.microservices: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+

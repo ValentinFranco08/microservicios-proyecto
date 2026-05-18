@@ -1,3 +1,4 @@
+// PedidoDTO.java
 package com.microservices.pedido.dto;
 
 import com.microservices.pedido.entity.Pedido.EstadoPedido;
