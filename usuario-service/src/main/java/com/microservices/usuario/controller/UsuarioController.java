@@ -112,4 +112,12 @@ public class UsuarioController {
             @Parameter(description = "ID del usuario") @PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.obtenerInfoBasica(id));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> manejarRuntimeException(RuntimeException ex) {
+        if (ex.getMessage() != null && ex.getMessage().contains("no encontrado")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

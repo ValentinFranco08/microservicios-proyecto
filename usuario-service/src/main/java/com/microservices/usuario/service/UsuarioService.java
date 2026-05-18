@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class UsuarioService {
      */
     public UsuarioDTO obtenerPorId(Long id) {
         return usuarioRepository.findById(id)
+                .filter(usuario -> Boolean.TRUE.equals(usuario.getActivo()))
                 .map(this::convertirADTO)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
     }
@@ -41,6 +43,7 @@ public class UsuarioService {
      */
     public UsuarioDTO obtenerPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
+                .filter(usuario -> Boolean.TRUE.equals(usuario.getActivo()))
                 .map(this::convertirADTO)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
     }
@@ -55,6 +58,7 @@ public class UsuarioService {
 
         Usuario usuario = convertirAEntidad(usuarioDTO);
         usuario.setActivo(true);
+        usuario.setFechaCreacion(LocalDateTime.now());
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         return convertirADTO(usuarioGuardado);
     }
@@ -72,6 +76,7 @@ public class UsuarioService {
         usuario.setDireccion(usuarioDTO.getDireccion());
         usuario.setCiudad(usuarioDTO.getCiudad());
         usuario.setPais(usuarioDTO.getPais());
+        usuario.setFechaActualizacion(LocalDateTime.now());
 
         Usuario usuarioActualizado = usuarioRepository.save(usuario);
         return convertirADTO(usuarioActualizado);
@@ -91,7 +96,9 @@ public class UsuarioService {
      * Verificar si un usuario existe (usado por otros microservicios)
      */
     public boolean existeUsuario(Long id) {
-        return usuarioRepository.existsById(id);
+        return usuarioRepository.findById(id)
+                .map(usuario -> Boolean.TRUE.equals(usuario.getActivo()))
+                .orElse(false);
     }
 
     /**
@@ -105,14 +112,16 @@ public class UsuarioService {
     private UsuarioDTO convertirADTO(Usuario usuario) {
         return new UsuarioDTO(
                 usuario.getId(),
-                usuario.getEmail(),
                 usuario.getNombre(),
                 usuario.getApellido(),
+                usuario.getEmail(),
+                usuario.getActivo(),
+                usuario.getFechaCreacion(),
+                usuario.getFechaActualizacion(),
                 usuario.getTelefono(),
                 usuario.getDireccion(),
                 usuario.getCiudad(),
-                usuario.getPais(),
-                usuario.getActivo()
+                usuario.getPais()
         );
     }
 
@@ -126,7 +135,9 @@ public class UsuarioService {
                 usuarioDTO.getDireccion(),
                 usuarioDTO.getCiudad(),
                 usuarioDTO.getPais(),
-                usuarioDTO.getActivo()
+                usuarioDTO.getActivo(),
+                usuarioDTO.getFechaCreacion() != null ? usuarioDTO.getFechaCreacion() : LocalDateTime.now(),
+                usuarioDTO.getFechaActualizacion()
         );
     }
 }
