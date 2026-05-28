@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: auth-service
+
+server:
+  port: 8003
+  servlet:
+    context-path: /auth-service
+
+jwt:
+  secret: ${JWT_SECRET:microservicios-secret-key-para-firmar-jwt-en-desarrollo-2026}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+logging:
+  level:
+    root: INFO
+    com.microservices: DEBUG

@@ -64,6 +64,25 @@ services:
       timeout: 5s
       retries: 10
 
+  # Microservicio de Autenticacion
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "18003:8003"
+    environment:
+      JWT_SECRET: microservicios-secret-key-para-firmar-jwt-en-desarrollo-2026
+      JWT_EXPIRATION_MS: 3600000
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/auth-service/v3/api-docs"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   # Microservicio de Pedido
   pedido-service:
     build:
@@ -78,15 +97,19 @@ services:
       SPRING_DATASOURCE_PASSWORD: pedido123
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       USUARIO_SERVICE_URL: http://usuario-service:8001/usuario-service
+      JWT_SECRET: microservicios-secret-key-para-firmar-jwt-en-desarrollo-2026
+      JWT_ENABLED: true
     depends_on:
       pedido-db:
         condition: service_healthy
       usuario-service:
         condition: service_healthy
+      auth-service:
+        condition: service_healthy
     networks:
       - microservices-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/pedido-service/api/v1/pedidos"]
+      test: ["CMD", "curl", "-f", "http://localhost:8002/pedido-service/v3/api-docs"]
       interval: 10s
       timeout: 5s
       retries: 10

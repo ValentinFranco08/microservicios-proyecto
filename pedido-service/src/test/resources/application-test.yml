@@ -28,6 +28,10 @@ usuario:
   service:
     url: http://localhost:8001/usuario-service
 
+jwt:
+  enabled: false
+  secret: microservicios-secret-key-para-firmar-jwt-en-desarrollo-2026
+
 logging:
   level:
     root: WARN
