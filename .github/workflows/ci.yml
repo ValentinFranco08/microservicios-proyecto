@@ -30,6 +30,10 @@ jobs:
         working-directory: pedido-service
         run: mvn --batch-mode clean package
 
+      - name: Build auth-service
+        working-directory: auth-service
+        run: mvn --batch-mode clean package
+
       - name: Validate Docker Compose
         run: docker compose config
 
@@ -43,7 +47,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          services="usuario-db pedido-db usuario-service pedido-service"
+          services="usuario-db pedido-db usuario-service auth-service pedido-service"
 
           for service in $services; do
             echo "Waiting for $service..."
@@ -70,7 +74,30 @@ jobs:
           set -euo pipefail
 
           curl -fsS http://localhost:18001/usuario-service/v3/api-docs > /dev/null
+          curl -fsS http://localhost:18003/auth-service/v3/api-docs > /dev/null
           curl -fsS http://localhost:18002/pedido-service/v3/api-docs > /dev/null
+
+          curl -fsS -X POST http://localhost:18003/auth-service/create-user \
+            -H "Content-Type: application/json" \
+            -d '{
+              "username": "ci-user",
+              "password": "ci-password"
+            }' > /tmp/auth-user.json
+
+          curl -fsS -X POST http://localhost:18003/auth-service/login \
+            -H "Content-Type: application/json" \
+            -d '{
+              "username": "ci-user",
+              "password": "ci-password"
+            }' > /tmp/auth-login.json
+
+          token="$(python3 -c 'import json; print(json.load(open("/tmp/auth-login.json"))["token"])')"
+
+          unauthorized_status="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:18002/pedido-service/api/v1/pedidos)"
+          if [ "$unauthorized_status" != "401" ]; then
+            echo "Expected pedido-service without token to return 401, got ${unauthorized_status}"
+            exit 1
+          fi
 
           curl -fsS -X POST http://localhost:18001/usuario-service/api/v1/usuarios \
             -H "Content-Type: application/json" \
@@ -101,10 +128,12 @@ jobs:
 
           curl -fsS -X POST http://localhost:18002/pedido-service/api/v1/pedidos \
             -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${token}" \
             -d @/tmp/pedido-request.json > /tmp/pedido.json
 
           pedido_id="$(python3 -c 'import json; print(json.load(open("/tmp/pedido.json"))["id"])')"
-          curl -fsS "http://localhost:18002/pedido-service/api/v1/pedidos/${pedido_id}/detalles" > /dev/null
+          curl -fsS "http://localhost:18002/pedido-service/api/v1/pedidos/${pedido_id}/detalles" \
+            -H "Authorization: Bearer ${token}" > /dev/null
 
       - name: Show container status
         if: always()
