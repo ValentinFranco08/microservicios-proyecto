@@ -5,6 +5,7 @@ Este proyecto implementa una arquitectura de microservicios con servicios indepe
 - **Microservicio de Usuario**: Gestiona la información de usuarios
 - **Microservicio de Pedido**: Gestiona los pedidos y se comunica con el servicio de Usuario
 - **Microservicio de Auth**: Gestiona usuarios de autenticación y emite tokens JWT
+- **Frontend App**: Interfaz web para probar el flujo completo
 
 ## Características
 
@@ -14,6 +15,7 @@ Este proyecto implementa una arquitectura de microservicios con servicios indepe
 - ✅ Swagger/OpenAPI 3.0 para documentación de APIs
 - ✅ Comunicación inter-microservicios mediante REST (RestTemplate)
 - ✅ Autenticación con JWT para proteger el servicio de Pedido
+- ✅ Frontend React para crear usuarios, iniciar sesión y consumir pedidos protegidos
 - ✅ JPA/Hibernate para gestión de datos
 - ✅ Health checks en Docker Compose
 - ✅ Lombok para reducir código boilerplate
@@ -21,6 +23,15 @@ Este proyecto implementa una arquitectura de microservicios con servicios indepe
 ## Arquitectura
 
 ```
+┌─────────────────────────────────────────────────────────┐
+│                    Frontend App                          │
+│  - UI web para autenticacion, usuarios y pedidos          │
+│  - URL: http://localhost:3000                             │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+                    REST API
+                       │
+                       ↓
 ┌─────────────────────────────────────────────────────────┐
 │                    Usuario Service                       │
 │  - Gestiona información de usuarios                      │
@@ -95,9 +106,16 @@ pedido-db          Up          0.0.0.0:5433->5432/tcp
 usuario-service    Up          0.0.0.0:18001->8001/tcp
 pedido-service     Up          0.0.0.0:18002->8002/tcp
 auth-service       Up          0.0.0.0:18003->8003/tcp
+frontend-app       Up          0.0.0.0:3000->80/tcp
 ```
 
 ## Acceso a las APIs
+
+### Interfaz Web
+
+- URL: http://localhost:3000
+
+Desde la interfaz se puede crear un usuario de autenticación, iniciar sesión, guardar el token JWT, crear usuarios de negocio, crear pedidos y probar que `pedido-service` rechaza llamadas sin token.
 
 ### Swagger Documentation
 
@@ -400,6 +418,15 @@ microservicios-proyecto/
 │   │           └── application.yml
 │   ├── Dockerfile
 │   └── pom.xml
+├── frontend-app/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── package.json
+│   └── vite.config.js
 ├── docker-compose.yml
 └── README.md
 ```
@@ -414,6 +441,8 @@ microservicios-proyecto/
 - **Lombok**: Generación de código
 - **RestTemplate**: Comunicación inter-servicios
 - **JJWT**: Generación y validación de tokens JWT
+- **React + Vite**: Interfaz web
+- **Nginx**: Servidor estático del frontend en Docker
 - **Maven**: Gestor de dependencias
 
 ## Notas importantes
