@@ -13,6 +13,7 @@
 # Build
 target/
 build/
+dist/
 *.jar
 *.war
 *.ear
