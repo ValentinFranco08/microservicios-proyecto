@@ -4,18 +4,10 @@ import com.microservices.auth.dto.AuthResponse;
 import com.microservices.auth.dto.CreateUserRequest;
 import com.microservices.auth.dto.LoginRequest;
 import com.microservices.auth.dto.UserResponse;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import com.microservices.auth.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,15 +18,15 @@ public class AuthService {
     private final Map<String, AuthUser> users = new ConcurrentHashMap<>();
     private final AtomicLong userIdSequence = new AtomicLong(1);
     private final PasswordEncoder passwordEncoder;
-    private final Key signingKey;
+    private final JwtService jwtService;
     private final long expirationMs;
 
     public AuthService(
             PasswordEncoder passwordEncoder,
-            @Value("${jwt.secret}") String jwtSecret,
-            @Value("${jwt.expiration-ms}") long expirationMs) {
+            JwtService jwtService,
+            @org.springframework.beans.factory.annotation.Value("${jwt.expiration-ms}") long expirationMs) {
         this.passwordEncoder = passwordEncoder;
-        this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        this.jwtService = jwtService;
         this.expirationMs = expirationMs;
     }
 
@@ -46,7 +38,7 @@ public class AuthService {
                 userIdSequence.getAndIncrement(),
                 username,
                 passwordEncoder.encode(request.getPassword()),
-                List.of("USER"));
+                "USER");
 
         AuthUser previousUser = users.putIfAbsent(username, user);
         if (previousUser != null) {
@@ -65,16 +57,7 @@ public class AuthService {
             throw new IllegalArgumentException("Usuario o contrasena invalida");
         }
 
-        Instant now = Instant.now();
-        Instant expiration = now.plusMillis(expirationMs);
-        String token = Jwts.builder()
-                .setSubject(user.username())
-                .claim("userId", user.id())
-                .claim("roles", user.roles())
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiration))
-                .signWith(signingKey, SignatureAlgorithm.HS256)
-                .compact();
+        String token = jwtService.generateToken(new User(user.id(), user.username(), user.role()));
 
         return new AuthResponse(token, "Bearer", expirationMs);
     }
@@ -88,6 +71,6 @@ public class AuthService {
         }
     }
 
-    private record AuthUser(Long id, String username, String passwordHash, List<String> roles) {
+    private record AuthUser(Long id, String username, String passwordHash, String role) {
     }
 }
